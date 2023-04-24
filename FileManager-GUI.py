@@ -5,10 +5,6 @@ from os.path import isfile, join
 import logging
 import os
 import shutil
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium import webdriver
-from selenium.webdriver.support.ui import Select
 
 pollTime = 2
 
@@ -33,13 +29,11 @@ def comparison_list_of_files(originalList: list, newList: list):
 
 def do_things_with_new_files(newFiles: list):
     
-    global ticket_field_name # Dominowatch 'Ticket' Field Input
     global file_name_without_extension # Gets the Filename with it's extension
     global file_name_with_extension # Gets the Filename with the extension cut out
 
     file_name_with_extension = newFiles[0]
     file_name_without_extension = newFiles[0].split(".")[0]
-    ticket_field_name = "[Ticket#" + file_name_without_extension + "]"
     
     window["-OUTPUT_WINDOW-"].print(f">>> Filename with Extension: {file_name_with_extension}")
 
@@ -248,5 +242,3 @@ while True:
         window["-PATH_INPUT-"].update(move_file_to_new_dest)
         window["-MOVE_INPUT-"].update(watchingPath)
     #----END Swapping Watching folder path with Move folder path event END----#   
-    
-window.close()
