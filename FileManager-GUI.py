@@ -6,7 +6,7 @@ import logging
 import os
 import shutil
 
-pollTime = 2
+pollTime = 1
 
 def file_in_directory(watchingPath: str):
     newFiles = [f for f in os.listdir(watchingPath) if isfile(join(watchingPath,f))]
@@ -44,12 +44,11 @@ def file_observer(watchingPath: str, pollTime: int):
     global stop
     x = 0
     
-    while x < 1000 and not stop:  # New statement
+    while x < 1200 and not stop:  # New statement
         time.sleep(1)
         x += 1
-        
         if "watching" not in locals():
-            previousFileList = file_in_directory(watchingPath) # Replace SET PATH in the GUI down bellow
+            previousFileList = file_in_directory(watchingPath) 
             watching = 1
             
         time.sleep(pollTime)
@@ -110,8 +109,8 @@ frame_layout_one = [[sg.Text("Main Settings", font="Arial 20 bold underline",tex
         [sg.Text("Select Folder to watch for:"),sg.Input(do_not_clear=True,key="-PATH_INPUT-"), sg.FolderBrowse()],
         [sg.Text("Select a specific file type to list or move:"), sg.Combo(combo_list, default_value= "all", size=(5, 5),key="-EXTENSION_TYPE-"),sg.Button("List files",tooltip="List all Files that the Folder Observer is watching.")]]
 frame_layout_three = [[sg.Text("Folder Observer Main", font="Arial 20 bold underline",text_color="#6fb97e")],
-        [sg.Text("Monitoring the specified Watching Path for new Files and listing them in the Output Window.")],
-        [sg.Button("Clear Output Window",tooltip="Clears main output Window."),sg.Text("|"),sg.Button("Start",tooltip="Starts the Folder Observer"), sg.Button("Stop",tooltip="Stops the Folder Observer"),sg.Button("Move"),sg.Text("|"),sg.Text("Folder Observer Status:"),sg.StatusBar("Waiting for an Event",key="-OBSERVER_STATUS-", size=(22,1)),sg.Button("Exit",size=(8,1),tooltip="Exit the Program.", expand_x=True)]]
+        [sg.Text("Monitoring the specified Watching Path (5min) for new Files and listing them in the Output Window.")],
+        [sg.Button("Clear Output Window",tooltip="Clears main output Window."),sg.Text("|"),sg.Button("Start",tooltip="Starts the Folder Observer"), sg.Button("Stop",tooltip="Stops the Folder Observer"),sg.Button("Move"),sg.Text("|"),sg.Text("Folder Observer Status:"),sg.StatusBar("Waiting for an Event",text_color="#778eca",key="-OBSERVER_STATUS-", size=(22,1)),sg.Button("Exit",size=(8,1),tooltip="Exit the Program.", expand_x=True)]]
 frame_layout_two = [[sg.Text("Optional: Moving files from Source Path to the set Moving Path.")],
         [sg.Text("Select Folder to move to:"),sg.Input(do_not_clear=True, key="-MOVE_INPUT-", size=(47,5)),sg.FolderBrowse()]]
 frame_layout_move_button = [[sg.Text("Confirm moving of Files?"), sg.Button("Move Files"),sg.Button("Switch Move/Watch")]]
@@ -144,30 +143,30 @@ while True:
      #----START Folder Observer starting code START----#
     if event == "Start":
         if len(watchingPath) > 0:
-            window["-OBSERVER_STATUS-"].update("Observer has been started", text_color="white")
+            window["-OBSERVER_STATUS-"].update("Observer has started", text_color="#6fb97e")
             stop = False
             window.perform_long_operation(lambda: file_observer(watchingPath, pollTime),"-OUTPUT_WINDOW-")
             window["-OUTPUT_WINDOW-"].print(">>> Observer successfully started.")
         else:
-            window["-OBSERVER_STATUS-"].update("Error, no Folder path set", text_color="white")
+            window["-OBSERVER_STATUS-"].update("Error: No folder path set", text_color="red")
             window["-OUTPUT_WINDOW-"].print(">>> Error: Please select a Folder above for the Observer to watch.")
 
     if event == "Stop":
         if len(watchingPath) > 0:
-            window["-OBSERVER_STATUS-"].update("Observer has been stopped", text_color="white")
+            window["-OBSERVER_STATUS-"].update("Observer has stopped", text_color="red")
             window["-PATH_INPUT-"].update("")
             window["-OUTPUT_WINDOW-"].print(">>> Observer successfully stopped.")
             stop = True
         else:
-            window["-OBSERVER_STATUS-"].update("Error, no Folder path set", text_color="white")
+            window["-OBSERVER_STATUS-"].update("Error: No folder path set", text_color="red")
             window["-OUTPUT_WINDOW-"].print(">>> Error: Please select a Folder above for the Observer to watch.")
             
     #----END Folder Observer starting code END----#
             
     #----START For clearing the main output window START----#
     if event == "Clear Output Window":
-        window["-OBSERVER_STATUS-"].update("Cleared Main Output Window", text_color="white")
         window["-OUTPUT_WINDOW-"].update("")
+        window["-OBSERVER_STATUS-"].update("Waiting for an Event", text_color="#778eca")
     #----END For clearing the main output window END----#
     
     #---- START Moving Files Button START ----#
